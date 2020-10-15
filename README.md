@@ -1,15 +1,15 @@
-## Executar .NETCore no docker localmente :whale:
+## Scripts para executar docker localmente :whale:
 
 ### Pré-requisitos
 - Python3
 - Pasta **``certs``** que contém os certificados SSL
 - Dockerfile (Dockerfile que irá montar sua imagem docker)
-- O script **``docker-run.py``**
+- O script **``dotnet-docker.py``**
 - Adicionar a pasta e o arquivo em uma pasta base (recomenda-se o caminho **``$HOME/docker/``**)
 
 ### Como executar
 #### Da pasta base
-    python3 docker-run.py -pn {project_name} -wf {workspace_folder}
+    python3 dotnet-docker.py -pn {project_name} -wf {workspace_folder}
 
 As flags **``-pn``** e **``-wf``** são obrigatórias
 
@@ -20,7 +20,7 @@ As flags **``-pn``** e **``-wf``** são obrigatórias
   ```json
     {
     "label": "docker-run",
-        "command": "python3 $HOME/docker/docker-run.py -wf ${workspaceFolder} -pn Inter.Crm.TrackSale.Integrator.AtualizaCampanhas.Job",
+        "command": "python3 $HOME/docker/dotnet-docker.py -wf ${workspaceFolder} -pn Inter.Crm.TrackSale.Integrator.AtualizaCampanhas.Job",
         "type": "shell",
         "group": {
             "kind": "test",
