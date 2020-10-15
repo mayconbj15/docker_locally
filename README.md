@@ -2,9 +2,10 @@
 
 ### Pré-requisitos
 - Python3
-- Pasta **``certs``** que contém os certificados SSL
-- Dockerfile (Dockerfile que irá montar sua imagem docker)
-- O script **``dotnet-docker.py``**
+- Docker instalado na sua máquina
+- Pasta **``certs``** que contém os certificados SSL (opcional para quem não irá fazer requisições HTTPS que necessitam de certificação)
+- [Dockerfile](https://github.com/mayconbj15/docker-scripts/blob/master/Dockerfile) (Dockerfile que irá montar sua imagem docker)
+- O script [dotnet-docker.py](https://github.com/mayconbj15/docker-scripts/blob/master/dotnet-docker.py)
 - Adicionar a pasta e o arquivo em uma pasta base (recomenda-se o caminho **``$HOME/docker/``**)
 
 ### Como executar
