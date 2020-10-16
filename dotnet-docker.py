@@ -12,6 +12,7 @@ def get_arguments():
     parser = argparse.ArgumentParser(description='Script to run .NETCore project in docker locally')
 
     parser.add_argument("-a", "--aws", dest = "aws", default = "n", choices=['y', 'n'], help="If you want to get credentials in aws")
+    parser.add_argument("-c", "--clean", dest = "dotnet_clean", default = "n", choices=['y', 'n'], help="Clean the dependencies of dotnet project")
     parser.add_argument("-d", "--detach", dest = "detach", default = "n", choices=['y', 'n'], help="Run container in background and print container ID")
     parser.add_argument("-di", "--debug-inside", dest = "debug_inside", default = "n", choices=['y', 'n'], help="Publish a container's port(s) to the host")
     parser.add_argument("-e", "--env", dest = "env", default = "dev", help="The env that container wiil run. This env is your role of aws")    
@@ -92,21 +93,36 @@ def stop_container():
     else:
         print('RUNNING CONTAINER IN DETACH MODE\n' + 'Type "docker ps" to see the container info')
 
-def main():
-    get_arguments()
+def dotnet_clean():
+    command = ['dotnet', 'clean', get_proj_file()]
+    print(command)
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
+def get_proj_file():
+    return args.workspace_folder + '/src/' + args.project_name + '/' + args.project_name + '.csproj'
 
-    if args.aws == 'y':
-        get_credentials(dir_path)
+def dotnet_stages(dir_path):
+    if args.dotnet_clean == 'y':
+        dotnet_clean()
     
-    workspace_folder = args.workspace_folder
+    publish(args.workspace_folder + '/src/' + args.project_name, dir_path)
+    copy_envs(args.workspace_folder, dir_path)
 
-    copy_envs(workspace_folder, dir_path)
-    publish(workspace_folder+'/src/'+args.project_name, dir_path)
+def docker_stages(dir_path):
     docker_build(dir_path)
     docker_run(dir_path)
     stop_container()
+
+def main():
+    get_arguments()
+
+    if args.aws == 'y':
+        get_credentials(dir_path)
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    dotnet_stages(dir_path)
+    
+    docker_stages(dir_path)
     
 
 if __name__ == "__main__":
