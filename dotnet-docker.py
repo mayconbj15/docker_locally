@@ -1,10 +1,9 @@
 import argparse
 import os
-import sys
-import json,yaml
+import yaml
 
 import subprocess
-from subprocess import PIPE, run
+from subprocess import run
 
 global args
 
