@@ -19,7 +19,7 @@ def get_arguments():
     parser.add_argument("-p", "--port", dest = "port", default = "8080:8080", help="Publish a container's port(s) to the host")
     parser.add_argument("-pn", "--project-name", dest = "project_name", default = "", required=True, help="The name of project")
     parser.add_argument("-r", "--remove", dest = "remove", default = "n", help="Remove the container after the execution")
-    parser.add_argument("-wf", "--workspace-folder", dest = "workspace_folder", default = "", required=True, help="The path of the workspace folder of the project")
+    parser.add_argument("-wf", "--workspace-folder", dest = "workspace_folder", default = "", required=True, help="The workspace path to the folder of the project")
     
     global args
     args = parser.parse_args()
