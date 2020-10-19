@@ -21,7 +21,7 @@ As flags **``-pn``** e **``-wf``** são obrigatórias
   ```json
     {
     "label": "docker-run",
-        "command": "python3 $HOME/docker-locally/dotnet-docker.py -wf ${workspaceFolder} -pn Inter.Crm.TrackSale.Integrator.AtualizaCampanhas.Job",
+        "command": "python3 $HOME/docker-locally/dotnet-docker.py -wf ${workspaceFolder} -pn {projectName}",
         "type": "shell",
         "group": {
             "kind": "test",
