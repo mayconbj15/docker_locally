@@ -47,12 +47,21 @@ def copy_envs(base_path, dir_path):
     copy_values(base_path, dir_path)
 
 def copy_runsh(base_path, dir_path):
-    cp_command = ['cp', base_path + '/run.sh', dir_path]
-    run_command(cp_command)
+    path_runsh = base_path + '/run.sh'
+    if os.path.exists(base_path) and not args.debug_inside:
+        cp_command = ['cp', path_runsh, dir_path]
+        run_command(cp_command)
+    else: 
+        print('run.sh NOT FOUND')
 
 def copy_values(base_path, dir_path):
-    cp_command = ['cp', base_path + '/src/main/kubernetes/dev/values.yaml', dir_path]
-    run_command(cp_command)
+    path_values = base_path + '/src/main/kubernetes/dev/values.yaml'
+
+    if os.path.exists(path_values):
+        cp_command = ['cp', path_values, dir_path]
+        run_command(cp_command)
+    else:
+        print('values.yaml NOT FOUND')
 
 def get_proj_file():
     return args.workspace_folder + '/src/' + args.project_name + '/' + args.project_name + '.csproj'
@@ -68,8 +77,14 @@ def docker_build(dir_path):
     run_command(build_command)
 
 def docker_run(dir_path):
-    base_command = ['docker', 'run', '--env-file', dir_path+'/env_file']
+    base_command = ['docker', 'run']
     
+    path_env_file = dir_path + '/env_file'
+
+    if os.path.exists(path_env_file):
+        base_command.append('--env-file')
+        base_command.append(path_env_file)
+
     base_command = readYamlFile(dir_path, base_command)
     
     #base_command.append('-it') # usar quando conseguir debugar dentro do container
@@ -122,10 +137,9 @@ def get_credentials(dir_path):
 def main():
     get_arguments()
 
+    dir_path = os.path.dirname(os.path.realpath(__file__))
     if args.aws == 'y':
         get_credentials(dir_path)
-
-    dir_path = os.path.dirname(os.path.realpath(__file__))
 
     dotnet_stages(dir_path)
     
