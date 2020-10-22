@@ -48,7 +48,8 @@ def copy_envs(base_path, dir_path):
 
 def copy_runsh(base_path, dir_path):
     path_runsh = base_path + '/run.sh'
-    if os.path.exists(base_path) and not args.debug_inside:
+
+    if os.path.exists(base_path) and args.debug_inside == 'n':
         cp_command = ['cp', path_runsh, dir_path]
         run_command(cp_command)
     else: 
@@ -73,7 +74,7 @@ def docker_stages(dir_path):
     stop_container()
 
 def docker_build(dir_path):
-    build_command = ['docker', 'build', '--tag', args.image_name, dir_path+'/.']
+    build_command = ['docker', 'build', '--tag', args.image_name, dir_path + '/.']
     run_command(build_command)
 
 def docker_run(dir_path):
@@ -93,7 +94,7 @@ def docker_run(dir_path):
         base_command.append('-d')
 
     base_command.append('-p')
-    base_command.append('8080:8080')
+    base_command.append(args.port)
     base_command.append(args.image_name) 
 
     run_command(base_command)
