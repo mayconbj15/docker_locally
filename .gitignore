@@ -4,3 +4,4 @@ values.yaml
 
 publish
 certs
+__pycache__

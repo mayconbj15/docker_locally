@@ -16,12 +16,16 @@ RUN apt-get update \
     && update-ca-certificates 2>/dev/null || true \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /opt
+WORKDIR /app
 
 RUN echo "Copia do ambiente de build"
-COPY ./publish /opt/
+COPY ./publish /app/
 COPY run.sh .
 
+RUN pwd
+RUN ls
+#RUN ["sh", "run.sh"]
+RUN chmod 777 run.sh
 EXPOSE 8080
 
 ENTRYPOINT ["sh", "run.sh"]

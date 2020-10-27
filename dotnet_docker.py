@@ -14,17 +14,15 @@ def get_arguments():
     parser.add_argument("-c", "--clean", dest = "dotnet_clean", default = "n", choices=['y', 'n'], help="Clean the dependencies of dotnet project")
     parser.add_argument("-d", "--detach", dest = "detach", default = "n", choices=['y', 'n'], help="Run container in background and print container ID")
     parser.add_argument("-di", "--debug-inside", dest = "debug_inside", default = "n", choices=['y', 'n'], help="Publish a container's port(s) to the host")
-    parser.add_argument("-e", "--env", dest = "env", default = "dev", help="The env that container wiil run. This env is your role of aws")    
+    parser.add_argument("-e", "--env", dest = "env", default = "uat", help="The env that container wiil run. This env is your role of aws")    
     parser.add_argument("-in", "--image-name", dest = "image_name", default = "dotnet-image", help="The name of the image that docker will build")
     parser.add_argument("-p", "--port", dest = "port", default = "8080:8080", help="Publish a container's port(s) to the host")
     parser.add_argument("-pn", "--project-name", dest = "project_name", default = "", required=True, help="The name of project")
-    parser.add_argument("-r", "--remove", dest = "remove", default = "n", help="Remove the container after the execution")
+    parser.add_argument("-r", "--remove", dest = "remove", default = "n", choices=['y', 'n'], help="Remove the container after the execution")
     parser.add_argument("-wf", "--workspace-folder", dest = "workspace_folder", default = "", required=True, help="The workspace path to the folder of the project")
     
     global args
     args = parser.parse_args()
-
-    print(args)
 
 #dotnet stages functions
 def dotnet_stages(dir_path):
@@ -44,7 +42,7 @@ def publish(base_path, dir_path):
 
 def copy_envs(base_path, dir_path):
     copy_runsh(base_path, dir_path)
-    copy_values(base_path, dir_path)
+    copy_values(base_path + '/src/main/kubernetes/dev/values.yaml', dir_path + '/env_files/env_file.env')
 
 def copy_runsh(base_path, dir_path):
     path_runsh = base_path + '/run.sh'
@@ -55,14 +53,25 @@ def copy_runsh(base_path, dir_path):
     else: 
         print('run.sh NOT FOUND')
 
-def copy_values(base_path, dir_path):
-    path_values = base_path + '/src/main/kubernetes/dev/values.yaml'
+def copy_values(from_path, to_path):
+    yaml_file = read_yaml_file(from_path)
 
-    if os.path.exists(path_values):
-        cp_command = ['cp', path_values, dir_path]
-        run_command(cp_command)
-    else:
-        print('values.yaml NOT FOUND')
+    env_file = yaml_to_env(yaml_file)
+
+    try:
+        f = open(to_path, 'w')
+        f.writelines(env_file)
+        f.close()
+    except:
+        print('Erro ao abrir arquivo ' + to_path)
+    
+def yaml_to_env(yaml_file):
+    env = ''
+
+    for x in yaml_file["env"]:
+        env += str(x['name']) + '=' + str(x['value']) + '\n'
+
+    return env
 
 def get_proj_file():
     return args.workspace_folder + '/src/' + args.project_name + '/' + args.project_name + '.csproj'
@@ -80,21 +89,24 @@ def docker_build(dir_path):
 def docker_run(dir_path):
     base_command = ['docker', 'run']
     
-    path_env_file = dir_path + '/env_file'
-
-    if os.path.exists(path_env_file):
-        base_command.append('--env-file')
-        base_command.append(path_env_file)
-
-    base_command = readYamlFile(dir_path, base_command)
-    
-    #base_command.append('-it') # usar quando conseguir debugar dentro do container
     if args.detach == 'y':
         print('CONTAINER ID')
         base_command.append('-d')
 
     base_command.append('-p')
     base_command.append(args.port)
+
+    path_env_file_aws = dir_path + '/env_files/env_file_aws'
+    path_env_file = dir_path + '/env_files/env_file.env'
+
+    if os.path.exists(path_env_file_aws):
+        base_command.append('--env-file')
+        base_command.append(path_env_file_aws)
+
+    if os.path.exists(path_env_file):
+        base_command.append('--env-file')
+        base_command.append(path_env_file) 
+    #base_command.append('-it') # usar quando conseguir debugar dentro do container
     base_command.append(args.image_name) 
 
     run_command(base_command)
@@ -111,15 +123,14 @@ def stop_container():
     else:
         print('RUNNING CONTAINER IN DETACH MODE\n' + 'Type "docker ps" to see the container info')
 
-def readYamlFile(dir_path, base_command):
-    with open(dir_path+'/values.yaml') as f:
-        j = yaml.load(f, Loader=yaml.FullLoader)
-
-        for x in j["env"]:
-            base_command.append('--env')
-            base_command.append(str(x['name']) + '=' + str(x['value']))        
-        
-    return base_command
+def read_yaml_file(dir_path):
+    try:
+        f = open(dir_path)
+        y = yaml.load(f, Loader=yaml.FullLoader)
+        f.close()
+        return y
+    except:
+        print('Erro ao abrir arquivo ' + dir_path)
 
 def run_command(command, shell=False):
     try:
@@ -132,15 +143,15 @@ def run_command(command, shell=False):
 
 #aws functions
 def get_credentials(dir_path):
-    command = ['aws-vault exec ' + args.env + ' -- env | grep --color=never ^AWS_ > ' + dir_path+'/env_file']
+    command = ['aws-vault exec ' + args.env + ' -- env | grep --color=never ^AWS_ > ' + dir_path]
     run_command(command, shell=True)
 
 def main():
     get_arguments()
-
     dir_path = os.path.dirname(os.path.realpath(__file__))
+    
     if args.aws == 'y':
-        get_credentials(dir_path)
+        get_credentials(dir_path + '/env_files/env_file_aws')
 
     dotnet_stages(dir_path)
     
