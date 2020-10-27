@@ -131,6 +131,7 @@ def read_yaml_file(dir_path):
         return y
     except:
         print('Erro ao abrir arquivo ' + dir_path)
+        return ''
 
 def run_command(command, shell=False):
     try:

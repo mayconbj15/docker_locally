@@ -43,8 +43,9 @@ def set_env_aws():
 def yaml_to_env(yaml_file):
     env = ''
 
-    for x in yaml_file["env"]:
-        env += str(x['name']) + '=' + str(x['value']) + '\n'
+    if yaml_file:
+        for x in yaml_file["env"]:
+            env += str(x['name']) + '=' + str(x['value']) + '\n'
 
     return env
 
