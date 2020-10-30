@@ -2,6 +2,9 @@ import argparse
 import yaml
 import os
 
+import subprocess
+from subprocess import run
+
 import dotnet_docker as dd
 
 global args
@@ -10,6 +13,7 @@ def get_arguments():
     parser = argparse.ArgumentParser(description='Script to run .NETCore project in docker locally')
 
     parser.add_argument("-a", "--aws", dest = "aws", default = "n", choices=['y', 'n'], help="If you want to set env_file_aws")
+    parser.add_argument("-e", "--env", dest = "env", default = "uat", help="The env that container wiil run. This env is your role of aws")    
     parser.add_argument("-pn", "--project-name", dest = "project_name", default = "", required=True, help="The name of project")
     parser.add_argument("-wf", "--workspace-folder", dest = "workspace_folder", default = "", required=True, help="The workspace path to the folder of the project")
     
@@ -33,12 +37,16 @@ def set_env_debug():
 def set_env_aws():
     dir_path = os.path.dirname(os.path.realpath(__file__)) + '/env_files/env_file_aws'
     if args.aws == 'y':
-        dd.get_credentials(dir_path)
+        get_credentials(dir_path)
         print('Credentials created')
     else:
         f = open(dir_path, 'w')
         f.write('')
         f.close()
+
+def get_credentials(dir_path):
+    command = ['aws-vault exec ' + args.env + ' -- env | grep --color=never ^AWS_ > ' + dir_path]
+    run_command(command, shell=True)
 
 def yaml_to_env(yaml_file):
     env = ''
@@ -49,11 +57,22 @@ def yaml_to_env(yaml_file):
 
     return env
 
+def run_command(command, shell=False):
+    try:
+        result_command = run(command, universal_newlines=True, shell=shell)
+        print(result_command)
+    except KeyboardInterrupt as err:
+        print('\nCOMANDO CANCELADO')
+    except:
+        print('ERRO AO EXECUTAR COMANDO')
+
 def main():
     get_arguments()
-    set_env_debug()
+    
     set_env_aws()
-
+    
+    set_env_debug()
+    
     print('SCRIPT EXECUTADO')
 
 if __name__ == "__main__":
