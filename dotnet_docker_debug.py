@@ -21,7 +21,12 @@ def get_arguments():
     args = parser.parse_args()
 
 def set_env_debug():    
-    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/env_files/env_file.env'
+    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/env_files/'
+
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
+
+    dir_path += 'env_file.env'
     
     yaml_file = dd.read_yaml_file(args.workspace_folder + '/src/main/kubernetes/dev/values.yaml')
     
@@ -35,7 +40,13 @@ def set_env_debug():
     f.close()
 
 def set_env_aws():
-    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/env_files/env_file_aws'
+    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/env_files/'
+
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
+
+    dir_path += 'env_file_aws'
+    
     if args.aws == 'y':
         get_credentials(dir_path)
         print('Credentials created')
