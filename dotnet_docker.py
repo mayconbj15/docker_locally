@@ -151,6 +151,9 @@ def main():
     get_arguments()
     dir_path = os.path.dirname(os.path.realpath(__file__))
     
+    if not os.path.exists(dir_path + '/env_files'):
+        os.mkdir(dir_path)
+
     if args.aws == 'y':
         get_credentials(dir_path + '/env_files/env_file_aws')
 
