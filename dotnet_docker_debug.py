@@ -1,9 +1,9 @@
-import argparse
-import yaml
 import os
-
 import subprocess
 from subprocess import run
+
+import argparse
+import yaml
 
 import dotnet_docker as dd
 
@@ -15,6 +15,8 @@ def get_arguments():
     parser.add_argument("-a", "--aws", dest = "aws", default = "n", choices=['y', 'n'], help="If you want to set env_file_aws")
     parser.add_argument("-e", "--env", dest = "env", default = "uat", help="The env that container wiil run. This env is your role of aws")    
     parser.add_argument("-pn", "--project-name", dest = "project_name", default = "", required=True, help="The name of project")
+    parser.add_argument("-st", "--session-time", dest = "session_time", type=int, default=2, help="The expiration time of the AWS session")
+    parser.add_argument("-rt", "--role-time", dest = "role_time", type=int, default=1, help="The expiration time of the AWS role")
     parser.add_argument("-wf", "--workspace-folder", dest = "workspace_folder", default = "", required=True, help="The workspace path to the folder of the project")
     
     global args
@@ -54,9 +56,9 @@ def set_env_aws():
         f = open(dir_path, 'w')
         f.write('')
         f.close()
-
+      
 def get_credentials(dir_path):
-    command = ['aws-vault exec ' + args.env + ' -- env | grep --color=never ^AWS_ > ' + dir_path]
+    command = ['aws-vault exec ' + args.env + ' --session-ttl=' + args.session_time + 'h --assume-role-ttl=' + args.role_time + 'h -- env | grep --color=never ^AWS_ > ' + dir_path]
     run_command(command, shell=True)
 
 def yaml_to_env(yaml_file):

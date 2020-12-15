@@ -1,9 +1,9 @@
-import argparse
 import os
-import yaml
-
 import subprocess
 from subprocess import run
+
+import argparse
+import yaml
 
 global args
 
@@ -18,6 +18,8 @@ def get_arguments():
     parser.add_argument("-in", "--image-name", dest = "image_name", default = "dotnet-image", help="The name of the image that docker will build")
     parser.add_argument("-p", "--port", dest = "port", default = "8080:8080", help="Publish a container's port(s) to the host")
     parser.add_argument("-pn", "--project-name", dest = "project_name", default = "", required=True, help="The name of project")
+    parser.add_argument("-st", "--session-time", dest = "session_time", type=int, default=2, help="The expiration time of the AWS session")
+    parser.add_argument("-rt", "--role-time", dest = "role_time", type=int, default=1, help="The expiration time of the AWS role")
     parser.add_argument("-r", "--remove", dest = "remove", default = "n", choices=['y', 'n'], help="Remove the container after the execution")
     parser.add_argument("-wf", "--workspace-folder", dest = "workspace_folder", default = "", required=True, help="The workspace path to the folder of the project")
     
@@ -144,7 +146,7 @@ def run_command(command, shell=False):
 
 #aws functions
 def get_credentials(dir_path):
-    command = ['aws-vault exec ' + args.env + ' -- env | grep --color=never ^AWS_ > ' + dir_path]
+    command = ['aws-vault exec ' + args.env + ' --session-ttl=' + args.session_time + 'h --assume-role-ttl=' + args.role_time + 'h -- env | grep --color=never ^AWS_ > ' + dir_path]
     run_command(command, shell=True)
 
 def main():
