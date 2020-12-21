@@ -146,7 +146,7 @@ def run_command(command, shell=False):
 
 #aws functions
 def get_credentials(dir_path):
-    command = ['aws-vault exec ' + args.env + ' --session-ttl=' + args.session_time + 'h --assume-role-ttl=' + args.role_time + 'h -- env | grep --color=never ^AWS_ > ' + dir_path]
+    command = ['aws-vault exec ' + args.env + ' --session-ttl=' + str(args.session_time) + 'h --assume-role-ttl=' + str(args.role_time) + 'h -- env | grep --color=never ^AWS_ > ' + dir_path]
     run_command(command, shell=True)
 
 def main():
