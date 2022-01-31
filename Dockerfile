@@ -1,6 +1,7 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.8-bionic
+ARG REPO=mcr.microsoft.com/dotnet/aspnet
+ARG TAG=5.0.12-buster-slim
+FROM $REPO:$TAG
 
-LABEL maintainer="Maycon Jesus <maycon.jesus@bancointer.com.br>"
 LABEL maintainer="Maycon Jesus <mayconbj15@gmail.com.br>"
 
 # Instala certificados
@@ -25,4 +26,4 @@ COPY run.sh .
 EXPOSE 8080
 
 ENTRYPOINT ["sh", "run.sh"]
-#ENTRYPOINT ["/bin/sh"] #Retire this comment to debug inside container, and add -it flag to docker run command
+#ENTRYPOINT ["/bin/sh"] #Remove this comment to debug inside container, and add -it flag to docker run command
