@@ -1,3 +1,3 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.8-bionic AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:6.0.0-bullseye-slim AS base
 EXPOSE 8080
 WORKDIR /app
