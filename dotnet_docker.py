@@ -17,7 +17,7 @@ def dotnet_stages(dir_path):
     if args.dotnet_clean == 'y':
         dotnet_clean()
     
-    publish(args.workspace_folder + '/src/' + args.project_name, dir_path)
+    publish(args.workspace_folder + '/src/' + args.project_namespace, dir_path)
     copy_envs(args.workspace_folder, dir_path)
 
 def dotnet_clean():
@@ -62,7 +62,7 @@ def yaml_to_env(yaml_file):
     return env
 
 def get_proj_file():
-    return args.workspace_folder + '/src/' + args.project_name + '/' + args.project_name + '.csproj'
+    return args.workspace_folder + '/src/' + args.project_namespace + '/' + args.project_namespace + '.csproj'
 
 #docker stages functions
 def docker_stages(dir_path):

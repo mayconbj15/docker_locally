@@ -11,7 +11,7 @@ def get_arguments():
     parser.add_argument("-e", "--env", dest = "env", default = "uat-service-bus", help="The env that container wiil run. This env is your role of aws")    
     parser.add_argument("-in", "--image-name", dest = "image_name", default = "dotnet-image", help="The name of the image that docker will build")
     parser.add_argument("-p", "--port", dest = "port", default = "8080:8080", help="Publish a container's port(s) to the host")
-    parser.add_argument("-pn", "--project-name", dest = "project_name", default = "", required=True, help="The name of project")
+    parser.add_argument("-pn", "--project-namespace", dest = "project_namespace", default = "", required=True, help="The namespace of project")
     parser.add_argument("-st", "--duration_time", dest = "duration_time", type=int, default=1, help="Duration of the temporary or assume-role session")
     parser.add_argument("-r", "--remove", dest = "remove", default = "n", choices=['y', 'n'], help="Remove the container after the execution")
     parser.add_argument("-wf", "--workspace-folder", dest = "workspace_folder", default = "", required=True, help="The workspace path to the folder of the project")

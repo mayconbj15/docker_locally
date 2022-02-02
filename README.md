@@ -9,7 +9,7 @@
 
 ### Como executar
 #### Da pasta base
-    python3 dotnet-docker.py -pn {project_name} -wf {workspace_folder}
+    python3 dotnet-docker.py -pn {project_namespace} -wf {workspace_folder}
 
 As flags **``-pn``** e **``-wf``** são obrigatórias
 
@@ -20,7 +20,7 @@ As flags **``-pn``** e **``-wf``** são obrigatórias
   ```json
     {
     "label": "docker-run",
-        "command": "python3 $HOME/docker-locally/dotnet-docker.py -wf ${workspaceFolder} -pn {projectName}",
+        "command": "python3 $HOME/docker-locally/dotnet-docker.py -wf ${workspaceFolder} -pn {projectNamespace}",
         "type": "shell",
         "group": {
             "kind": "test",
@@ -33,7 +33,7 @@ As flags **``-pn``** e **``-wf``** são obrigatórias
 ### Argumentos do script 
 
 #### Argumentos obrigatórios
-- ``-pn PROJECT_NAME, --project-name PROJECT_NAME The name of project``
+- ``-pn PROJECT_NAMESPACE, --project-name PROJECT_NAMESPACE The name of project``
 
 - ``-wf WORKSPACE_FOLDER, --workspace-folder WORKSPACE_FOLDER The workspace path to the folder of the project``
 
